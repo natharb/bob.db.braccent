@@ -46,7 +46,7 @@ def create(args):
     create_tables(args)
     s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
 
-    # TODO: POPULATE THE DB HERE
+    create_braccent_file(s,args)
 
     s.commit()
     s.close()
