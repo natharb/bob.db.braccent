@@ -61,7 +61,7 @@ class File(Base, bob.db.base.File):
 
 
     id = Column(Integer, primary_key=True)
-    path = Column(String(100), unique=True)
+    path = Column(String(300), unique=True)
     accent = Column(Enum(*ACCENTS))
 
     def __init__(self, id, path, accent):

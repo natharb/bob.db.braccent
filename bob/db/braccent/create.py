@@ -66,7 +66,7 @@ def add_command(subparsers):
 
 def create_braccent_file(session, args):
     filenames = os.listdir(args.files_dir)
-    i = 0;
+    i = 1
     for filename in filenames:
 
         if "Amazonas".upper() in filename.upper():
@@ -142,7 +142,8 @@ def create_braccent_file(session, args):
             print filename
             print "####################"
 
-        f = bob.db.braccent.File(i, filename, sotaque)
-        i = i + 1;
+        f = bob.db.braccent.File(i, filename.rstrip("\n"), sotaque)
+        i = i + 1
         session.add(f)
+        session.commit()
 
