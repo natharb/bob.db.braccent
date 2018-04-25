@@ -1,21 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# @author: Tiago de Freitas Pereira <tiago.pereira@idiap.ch>
-# @date:   Tue Aug  11 14:07:00 CEST 2015
-#
-# Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, version 3 of the License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# @author: Nathália Alves Rocha Batista
 
 """
 This script creates the BRACCENT database in a single pass.
@@ -25,6 +10,7 @@ import os
 
 from .models import *
 import numpy
+import os
 numpy.random.seed(10)
 
 
@@ -75,3 +61,44 @@ def add_command(subparsers):
   parser.add_argument('-f', '--files-dir', default='.',  help="Directory of the files (defaults to %(default)s)")
 
   parser.set_defaults(func=create) #action
+
+def create_braccent_file(session,args):
+   filenames = os.listdir(args.files_dir)
+   i = 0;
+   for filename in filenames:
+        if "Amazonas".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Roraima".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Amapa".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Belem".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Para".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Acre".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Rondonia".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Tocantins".upper() in filename.upper(): sotaque = 'nortista'
+		else if "MatoGrosso".upper() in filename.upper(): sotaque = 'nortista'
+		else if "Bahia".upper() and "Salvador" in filename.upper(): sotaque = 'baiano'
+		else if "Sergipe".upper() in filename.upper(): sotaque = 'baiano'
+		else if "MinasGerais".upper() and "MontesClaros".upper() in filename.upper(): sotaque = 'baiano'
+		else if "MinasGerais".upper() and "SaoFrancisco".upper() in filename.upper(): sotaque = 'baiano'
+	    else if "Mineiro".upper() in filename.upper(): sotaque = 'mineiro'
+		else if "EspiritoSanto".upper() in filename.upper(): sotaque = 'fluminense'
+	    else if "EspiritoSanto".upper() and "camposdosgoytacazes".upper() in filename.upper(): sotaque = 'fluminense'
+		else if "EspiritoSanto".upper() and "ubatuba".upper() in filename.upper(): sotaque = 'fluminense'
+        else if "RioJaneiro".upper() in filename.upper(): sotaque = 'carioca'
+		else if "Bahia".upper() and "pauloafonso" in filename.upper(): sotaque = 'nordestino'
+        else if "Pernambuco".upper() in filename.upper(): sotaque = 'nordestino' 
+        else if "Piaui".upper() in filename.upper(): sotaque = 'nordestino'
+        else if "Ceara".upper() in filename.upper(): sotaque = 'nordestino'
+		else if "RioGrandeDoNorte".upper() in filename.upper(): sotaque = 'nordestino'
+	    else if "Paraiba".upper() in filename.upper(): sotaque = 'nordestino'
+	    else if "Alagoas".upper() in filename.upper(): sotaque = 'nordestino'
+		else if "Maranhao".upper() in filename.upper(): sotaque = 'nordestino'
+		else if "SaoPaulo".upper() in filename.upper(): sotaque = 'sulista'
+	    else if "Parana".upper() in filename.upper(): sotaque = 'sulista'
+	    else if "SantaCatarina".upper() in filename.upper(): sotaque = 'sulista'
+	    else if "PortoAlegre".upper() in filename.upper(): sotaque = 'sulista'
+		else if "RioGrandeDoSul".upper() in filename.upper(): sotaque = 'sulista'
+		else if "MatoGrossoDoSul".upper() in filename.upper(): sotaque = 'sulista'
+
+			
+        f = bob.db.braccent.File(i,filename,sotaque)
+	i=i+1;
