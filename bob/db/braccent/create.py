@@ -138,12 +138,12 @@ def create_braccent_file(session, args):
         elif "Goias".upper() in filename.upper():
             sotaque = 'sulista'
         else:
-            print "####################"
-            print filename
-            print "####################"
+            print("####################")
+            print(filename)
+            print("####################")
+            exit()
 
         f = bob.db.braccent.File(i, filename.rstrip("\n"), sotaque)
         i = i + 1
         session.add(f)
-        session.commit()
 
