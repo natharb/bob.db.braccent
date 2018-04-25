@@ -95,7 +95,7 @@ def create_braccent_file(session, args):
             sotaque = 'baiano'
         elif "MinasGerais".upper() and "SaoFrancisco".upper() in filename.upper():
             sotaque = 'baiano'
-        elif "Mineiro".upper() in filename.upper():
+        elif "MinasGerais".upper() in filename.upper():
             sotaque = 'mineiro'
         elif "EspiritoSanto".upper() in filename.upper():
             sotaque = 'fluminense'
