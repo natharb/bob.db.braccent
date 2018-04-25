@@ -136,3 +136,5 @@ def create_braccent_file(session, args):
 
         f = bob.db.braccent.File(i, filename, sotaque)
         i = i + 1;
+        session.add(f)
+
