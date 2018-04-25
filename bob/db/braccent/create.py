@@ -22,7 +22,7 @@ def create_tables(args):
 
   engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2));
   File.metadata.create_all(engine)
-  
+
 
 # Driver API
 # ==========
@@ -67,38 +67,37 @@ def create_braccent_file(session,args):
    i = 0;
    for filename in filenames:
         if "Amazonas".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Roraima".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Amapa".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Belem".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Para".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Acre".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Rondonia".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Tocantins".upper() in filename.upper(): sotaque = 'nortista'
-		else if "MatoGrosso".upper() in filename.upper(): sotaque = 'nortista'
-		else if "Bahia".upper() and "Salvador" in filename.upper(): sotaque = 'baiano'
-		else if "Sergipe".upper() in filename.upper(): sotaque = 'baiano'
-		else if "MinasGerais".upper() and "MontesClaros".upper() in filename.upper(): sotaque = 'baiano'
-		else if "MinasGerais".upper() and "SaoFrancisco".upper() in filename.upper(): sotaque = 'baiano'
-	    else if "Mineiro".upper() in filename.upper(): sotaque = 'mineiro'
-		else if "EspiritoSanto".upper() in filename.upper(): sotaque = 'fluminense'
-	    else if "EspiritoSanto".upper() and "camposdosgoytacazes".upper() in filename.upper(): sotaque = 'fluminense'
-		else if "EspiritoSanto".upper() and "ubatuba".upper() in filename.upper(): sotaque = 'fluminense'
-        else if "RioJaneiro".upper() in filename.upper(): sotaque = 'carioca'
-		else if "Bahia".upper() and "pauloafonso" in filename.upper(): sotaque = 'nordestino'
-        else if "Pernambuco".upper() in filename.upper(): sotaque = 'nordestino' 
-        else if "Piaui".upper() in filename.upper(): sotaque = 'nordestino'
-        else if "Ceara".upper() in filename.upper(): sotaque = 'nordestino'
-		else if "RioGrandeDoNorte".upper() in filename.upper(): sotaque = 'nordestino'
-	    else if "Paraiba".upper() in filename.upper(): sotaque = 'nordestino'
-	    else if "Alagoas".upper() in filename.upper(): sotaque = 'nordestino'
-		else if "Maranhao".upper() in filename.upper(): sotaque = 'nordestino'
-		else if "SaoPaulo".upper() in filename.upper(): sotaque = 'sulista'
-	    else if "Parana".upper() in filename.upper(): sotaque = 'sulista'
-	    else if "SantaCatarina".upper() in filename.upper(): sotaque = 'sulista'
-	    else if "PortoAlegre".upper() in filename.upper(): sotaque = 'sulista'
-		else if "RioGrandeDoSul".upper() in filename.upper(): sotaque = 'sulista'
-		else if "MatoGrossoDoSul".upper() in filename.upper(): sotaque = 'sulista'
+        elif "Roraima".upper() in filename.upper(): sotaque = 'nortista'
+	elif "Amapa".upper() in filename.upper(): sotaque = 'nortista'
+	elif "Belem".upper() in filename.upper(): sotaque = 'nortista'
+	elif "Para".upper() in filename.upper(): sotaque = 'nortista'
+        elif "Acre".upper() in filename.upper(): sotaque = 'nortista'
+	elif "Rondonia".upper() in filename.upper(): sotaque = 'nortista'
+        elif "Tocantins".upper() in filename.upper(): sotaque = 'nortista'
+        elif "MatoGrosso".upper() in filename.upper(): sotaque = 'nortista'
+	elif "Bahia".upper() and "Salvador" in filename.upper(): sotaque = 'baiano'
+	elif "Sergipe".upper() in filename.upper(): sotaque = 'baiano'
+        elif "MinasGerais".upper() and "MontesClaros".upper() in filename.upper(): sotaque = 'baiano'
+	elif "MinasGerais".upper() and "SaoFrancisco".upper() in filename.upper(): sotaque = 'baiano'
+	elif "Mineiro".upper() in filename.upper(): sotaque = 'mineiro'
+	elif "EspiritoSanto".upper() in filename.upper(): sotaque = 'fluminense'
+	elif "EspiritoSanto".upper() and "camposdosgoytacazes".upper() in filename.upper(): sotaque = 'fluminense'
+        elif "EspiritoSanto".upper() and "ubatuba".upper() in filename.upper(): sotaque = 'fluminense'
+        elif "RioJaneiro".upper() in filename.upper(): sotaque = 'carioca'
+        elif "Bahia".upper() and "pauloafonso" in filename.upper(): sotaque = 'nordestino'
+        elif "Pernambuco".upper() in filename.upper(): sotaque = 'nordestino' 
+        elif "Piaui".upper() in filename.upper(): sotaque = 'nordestino'
+        elif "Ceara".upper() in filename.upper(): sotaque = 'nordestino'
+        elif "RioGrandeDoNorte".upper() in filename.upper(): sotaque = 'nordestino'
+	elif "Paraiba".upper() in filename.upper(): sotaque = 'nordestino'
+	elif "Alagoas".upper() in filename.upper(): sotaque = 'nordestino'
+        elif "Maranhao".upper() in filename.upper(): sotaque = 'nordestino'
+	elif "SaoPaulo".upper() in filename.upper(): sotaque = 'sulista'
+	elif "Parana".upper() in filename.upper(): sotaque = 'sulista'
+	elif "SantaCatarina".upper() in filename.upper(): sotaque = 'sulista'
+	elif "PortoAlegre".upper() in filename.upper(): sotaque = 'sulista'
+        elif "RioGrandeDoSul".upper() in filename.upper(): sotaque = 'sulista'
+	elif "MatoGrossoDoSul".upper() in filename.upper(): sotaque = 'sulista'
 
-			
         f = bob.db.braccent.File(i,filename,sotaque)
 	i=i+1;
