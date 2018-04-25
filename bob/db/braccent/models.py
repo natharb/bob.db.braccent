@@ -21,13 +21,13 @@ Base = declarative_base()
 
 """ Defining protocols. Yes, they are static """
 
-PROTOCOLS = ('braccent_fold1, braccent_fold2, braccent_fold3, braccent_fold4, braccent_fold5, braccent_fold6, braccent_fold7, braccent_fold8, braccent_fold9, braccent_fold10')
+PROTOCOLS = ('braccent_fold1', 'braccent_fold2', 'braccent_fold3', 'braccent_fold4', 'braccent_fold5', 'braccent_fold6', 'braccent_fold7', 'braccent_fold8', 'braccent_fold9', 'braccent_fold10')
 
 GROUPS = ('world', 'dev')
 
 PURPOSES = ('train', 'enroll', 'probe')
 
-ACCENTS = ('nortista,baiano,fluminense,mineiro,carioca,nordestino,sulista')
+ACCENTS = ('nortista', 'baiano', 'fluminense', 'mineiro', 'carioca', 'nordestino', 'sulista')
 
 
 class Protocol_File_Association(Base):
