@@ -19,7 +19,6 @@ def create_tables(args):
     """Creates all necessary tables (only to be used at the first time)"""
 
     from bob.db.base.utils import create_engine_try_nolock
-
     engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2));
     File.metadata.create_all(engine)
 
@@ -46,9 +45,12 @@ def create(args):
     create_tables(args)
     s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
 
-    create_braccent_file(s,args)
-
+    files = create_braccent_file(s,args)
     s.commit()
+    
+    create_braccent_protocols(s,  files)
+    s.commit()
+
     s.close()
 
 
@@ -58,13 +60,40 @@ def add_command(subparsers):
     parser = subparsers.add_parser('create', help=create.__doc__)
 
     parser.add_argument('-r', '--recreate', action='store_true', help='If set, I\'ll first erase the current database')
-    parser.add_argument('-v', '--verbose', action='count', help='Increase verbosity?')
+    parser.add_argument('-v', '--verbose', action='count', help='Increase verbosity?', default=1)
     parser.add_argument('-f', '--files-dir', default='.', help="Directory of the files (defaults to %(default)s)")
 
     parser.set_defaults(func=create)  # action
 
 
+
+def create_braccent_protocols(session, files):
+
+    X = []
+    y = []
+
+    for accent in files:
+        for f in files[accent]:
+            X.append(f)
+            y.append(accent)  
+
+    import ipdb; ipdb.set_trace()   
+
+    # TODO: strat. kfold
+    protocol = None
+    group = None
+    purpose = None
+    file_id = None
+    session.add(bob.db.braccent.Protocol_File_Association( protocol, group, purpose, file_id))
+
+    pass
+
+
+
 def create_braccent_file(session, args):
+
+    files = dict()
+
     filenames = os.listdir(args.files_dir)
     i = 1
     for filename in filenames:
@@ -143,7 +172,16 @@ def create_braccent_file(session, args):
             print("####################")
             exit()
 
+
         f = bob.db.braccent.File(i, filename.rstrip("\n"), sotaque)
+
+        # Creating dict to control the files
+        if sotaque not in files:
+            files[sotaque] = []
+        files[sotaque].append(f)
+
         i = i + 1
         session.add(f)
+
+    return files
 
