@@ -31,10 +31,7 @@ SQLITE_FILE = Interface().files()[0]
 
 
 class Database(bob.db.base.SQLiteDatabase):
-    """Wrapper class for the CUHK-CUFS database for Heterogeneous face
-    recognition recognition
-    (http://mmlab.ie.braccent.edu.hk/archive/facesketch.html).
-  
+    """Wrapper class for the Braccent dataset
     """
 
     def __init__(self, original_directory=None, original_extension=None):
@@ -85,6 +82,10 @@ class Database(bob.db.base.SQLiteDatabase):
             if type(model_ids) is not list and type(model_ids) is not tuple:
                 model_ids = [model_ids]
 
+            query = query.filter(
+                bob.db.braccent.File.client_id.in_(model_ids))
+
+
         raw_files = query.all()
         files = []
         for f in raw_files:
@@ -125,7 +126,4 @@ class Database(bob.db.base.SQLiteDatabase):
     def groups(self, protocol=None, **kwargs):
         """This function returns the list of groups for this database."""
         return GROUPS
-
-
-
 

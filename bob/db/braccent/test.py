@@ -21,214 +21,77 @@
 """
 
 import bob.db.braccent
+import numpy
 
 """ Defining protocols. Yes, they are static """
-PROTOCOLS = ('cuhk_p2s', 'arface_p2s', 'xm2vts_p2s', 'all-mixed_p2s',
-             'cuhk_s2p', 'arface_s2p', 'xm2vts_s2p', 'all-mixed_s2p',
-             'search_split1_p2s','search_split2_p2s','search_split3_p2s','search_split4_p2s','search_split5_p2s',
-             'search_split1_s2p','search_split2_s2p','search_split3_s2p','search_split4_s2p','search_split5_s2p')
+PROTOCOLS = ('closedset_braccent_fold1', 'closedset_braccent_fold2', 'closedset_braccent_fold3', 'closedset_braccent_fold4', 'closedset_braccent_fold5', 'closedset_braccent_fold6', 'closedset_braccent_fold7', 'closedset_braccent_fold8', 'closedset_braccent_fold9', 'closedset_braccent_fold10')
+
 
 GROUPS    = ('world', 'dev')
 
 PURPOSES   = ('train', 'enroll', 'probe')
 
 
-
 def test01_protocols_purposes_groups():
   
   #testing protocols
-  possible_protocols = bob.db.cuhk_cufs.Database().protocols()
+  possible_protocols = bob.db.braccent.Database().protocols()
   for p in possible_protocols:
     assert p  in PROTOCOLS
 
   #testing purposes
-  possible_purposes = bob.db.cuhk_cufs.Database().purposes()
+  possible_purposes = bob.db.braccent.Database().purposes()
   for p in possible_purposes:
     assert p  in PURPOSES
 
   #testing GROUPS
-  possible_groups = bob.db.cuhk_cufs.Database().groups()
+  possible_groups = bob.db.braccent.Database().groups()
   for p in possible_groups:
     assert p  in GROUPS
 
 
+def test02_closed_set_braccent():
 
-def test02_search_files_protocols():
+    world      = 547
+    dev        = 828
+    total_data = world + dev # =1375
+  
+    dev_enroll = 328
+    dev_probe  = 500
 
-  total_data = 808+404
-  world      = 808
-  dev        = 404
-  dev_enroll = 202
-  dev_probe  = 202
+    # Testing dev-enroll for ALL classes
+    dev_enroll_nortista = 6
+    dev_enroll_baiano = 28
+    dev_enroll_fluminense = 10
+    dev_enroll_mineiro = 26
+    dev_enroll_carioca = 15
+    dev_enroll_nordestino = 48
+    dev_enroll_sulista = 195
+ 
+    protocols = bob.db.braccent.Database().protocols()
+    for p in protocols:
   
-  
-  protocols = bob.db.cuhk_cufs.Database().protocols()
-  for p in protocols:
-  
-    if "search" in p:  
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p)) == total_data
+        if "closedset_braccent" in p:  
+
+            # Checking overall stats
+            assert len(bob.db.braccent.Database().objects(protocol=p)) == total_data
     
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world")) == world
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="world")) == world
 
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev")) == dev
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="enroll")) == dev_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="probe"))  == dev_probe
-          
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval")) == 0
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev")) == dev
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll")) == dev_enroll
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="probe"))  == dev_probe
+            # Checking all classes
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Nortista",])) == dev_enroll_nortista
 
-  p = "search_split1_p2s"
-  assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=[5])) == 1
-  assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="probe", model_ids=[5]))  == dev_probe      
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Baiano",])) == dev_enroll_baiano
 
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Fluminense",])) == dev_enroll_fluminense
 
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Mineiro",])) == dev_enroll_mineiro
 
-def test03_verification_arface_protocols():
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Carioca",])) == dev_enroll_carioca
 
-  total_data = 88+80+78
-  world      = 88
-  
-  dev        = 80
-  dev_enroll = 40
-  dev_probe  = 40
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Nordestino",])) == dev_enroll_nordestino
 
-  eval        = 78
-  eval_enroll = 39
-  eval_probe  = 39
-
-  protocols = bob.db.cuhk_cufs.Database().protocols()
-  for p in protocols:
-    if "arface" in p:  
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p)) == total_data
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world")) == world
-
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev")) == dev
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="enroll")) == dev_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="probe"))  == dev_probe
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval")) == eval
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="enroll")) == eval_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="probe"))  == eval_probe
-
-
-
-def test04_verification_xm2vts_protocols():
-
-  total_data = 118*2+88*2+89*2
-  world      = 118*2
-  
-  dev        = 88*2
-  dev_enroll = 88
-  dev_probe  = 88
-
-  eval        = 89*2
-  eval_enroll = 89
-  eval_probe  = 89
-
-  protocols = bob.db.cuhk_cufs.Database().protocols()
-  for p in protocols:
-    if "xm2vts" in p:  
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p)) == total_data
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world")) == world
-
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev")) == dev
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="enroll")) == dev_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="probe"))  == dev_probe
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval")) == eval
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="enroll")) == eval_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="probe"))  == eval_probe
-
-
-
-def test05_verification_cuhk_protocols():
-
-  total_data = 75*2 + 56*2 + 57*2
-  world      = 75*2
-  
-  dev        = 56*2
-  dev_enroll = 56
-  dev_probe  = 56
-
-  eval        = 57*2
-  eval_enroll = 57
-  eval_probe  = 57
-
-  protocols = bob.db.cuhk_cufs.Database().protocols()  
-  for p in protocols:
-    if "cuhk" in p:  
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p)) == total_data
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world")) == world
-
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev")) == dev
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="enroll")) == dev_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="dev", purposes="probe"))  == dev_probe
-    
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval")) == eval
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="enroll")) == eval_enroll
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="eval", purposes="probe"))  == eval_probe
-      
-      # Checking the modalities
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world", modality=["photo"])) == world//2
-      assert len(bob.db.cuhk_cufs.Database().objects(protocol=p, groups="world", modality=["sketch"])) == world//2
-
-
-def test06_search_clients_protocols():
-
-  world      = 404
-  dev        = 202
-      
-  protocols = bob.db.cuhk_cufs.Database().protocols()
-  for p in protocols:
-  
-    if "search" in p:  
-      assert len(bob.db.cuhk_cufs.Database().model_ids(protocol=p, groups="world")) == world
-      assert len(bob.db.cuhk_cufs.Database().model_ids(protocol=p, groups="dev")) == dev
-
-
-def test07_search_tobjects():
-
-  world      = 404
-  protocols = bob.db.cuhk_cufs.Database().protocols()  
-  for p in protocols:
-    if "search" in p:
-      assert len(bob.db.cuhk_cufs.Database().tobjects(protocol=p)) == world
-      assert len(bob.db.cuhk_cufs.Database().tclients(protocol=p)) == world
-      assert len(bob.db.cuhk_cufs.Database().tmodel_ids(protocol=p)) == world
-
-
-
-def test08_strings():
-  
-  db = bob.db.cuhk_cufs.Database()
-
-  for p in PROTOCOLS:
-    for g in GROUPS:
-      for u in PURPOSES:
-        files = db.objects(purposes=u, groups=g, protocol=p)
-
-        for f in files:
-          #Checking if the strings are correct 
-          assert f.purpose  == u
-          assert f.protocol == p
-          assert f.group    == g
-       
-
-def test09_annotations():
-
-  db = bob.db.cuhk_cufs.Database()
-
-  for p in PROTOCOLS:
-    for f in db.objects(protocol=p):    
-
-      assert len(f.annotations(annotation_type=""))==35 #ALL ANNOTATIONS
-
-      assert f.annotations()["reye"][0] > 0
-      assert f.annotations()["reye"][1] > 0
-
-      assert f.annotations()["leye"][0] > 0
-      assert f.annotations()["leye"][1] > 0
-
-
+            assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Sulista",])) == dev_enroll_sulista

@@ -8,12 +8,10 @@ This script creates the BRACCENT database in a single pass.
 
 import os
 
-from .models import *
 import numpy
-import os
-
 numpy.random.seed(10)
 
+from .models import ACCENTS, SEX, File, Protocol_File_Association
 
 def create_tables(args):
     """Creates all necessary tables (only to be used at the first time)"""
@@ -48,9 +46,9 @@ def create(args):
     files = create_braccent_file(s,args)
     s.commit()
     
-    create_braccent_protocols(s,  files)
+    braccent_sets_per_protocol = create_closedset_braccent_protocols(s,  files)
+    
     s.commit()
-
     s.close()
 
 
@@ -66,122 +64,110 @@ def add_command(subparsers):
     parser.set_defaults(func=create)  # action
 
 
+def create_closedset_braccent_protocols(session, files):
+    """
+    Create the closedset braccent protocol
 
-def create_braccent_protocols(session, files):
+    10 folds will be created with the following format: closedset_braccent_fold[1-10]
 
-    X = []
-    y = []
+    For each accent,
+      - 40% of the files will be used in the set - world
+      - 60% of the files will be used in the set - dev. For the dev set
+         - 40% of the files will be used to train the accent
+         - 60% of the files will be used to probe
+    """
+  
+    # hard coding the percentages
+    world_set = 0.4
 
-    for accent in files:
-        for f in files[accent]:
-            X.append(f)
-            y.append(accent)  
+    dev_set = 0.6
+    dev_enroll = 0.4
+    dev_probe = 0.6
 
-    import ipdb; ipdb.set_trace()   
+    # For each fold
+    sets_per_protocol = dict()
+    for i in range(1,11):
 
-    # TODO: strat. kfold
-    protocol = None
-    group = None
-    purpose = None
-    file_id = None
-    session.add(bob.db.braccent.Protocol_File_Association( protocol, group, purpose, file_id))
+        protocol = "closedset_braccent_fold{0}".format(i)
+        sets_per_protocol[protocol] = []
 
-    pass
+        # for each accent
+        for accent in ACCENTS:
 
+            # defining the number of files per accent
+            total_files_accent = len(files[accent])
+
+            n_world = int(numpy.floor(total_files_accent * world_set))
+            n_dev = int(numpy.ceil(total_files_accent * dev_set))
+            n_dev_enroll = int(numpy.floor(n_dev * dev_enroll))
+            #n_dev_probe = numpy.ceil(n_dev * dev_probe) # will keep this just for didactics
+
+            # NOW let's filter the files
+            accent_files = numpy.array(files[accent])
+
+            # Shuffling
+            numpy.random.shuffle(accent_files)
+
+            # Selecting the data
+            world_files = accent_files[0:n_world]
+            dev_files = accent_files[n_world:]
+            dev_enroll_files = dev_files[0:n_dev_enroll]
+            dev_probe_files = dev_files[n_dev_enroll:]
+
+            # Appending the files sets in case you want to use this in the future
+            sets_per_protocol[protocol].append(world_files)
+            sets_per_protocol[protocol].append(dev_enroll_files)
+            sets_per_protocol[protocol].append(dev_probe_files)
+
+            # Appending to the dataset
+            for f in world_files:
+                session.add(Protocol_File_Association(protocol, "world", "train", f.id))
+               
+            # Appending to the dataset
+            for f in dev_enroll_files:
+                session.add(Protocol_File_Association(protocol, "dev", "enroll", f.id))
+     
+            # Appending to the dataset
+            for f in dev_probe_files:
+                session.add(Protocol_File_Association(protocol, "dev", "probe", f.id))
+
+    # Returning the selected list if you want to use them in the future
+    return sets_per_protocol
 
 
 def create_braccent_file(session, args):
+    """
+    Inserted braccent files into the database (table File)
+    """
 
+    # Keeping all files in a dict, so we can easilly organize the protocols
     files = dict()
 
-    filenames = os.listdir(args.files_dir)
-    i = 1
-    for filename in filenames:
+    # Basepath is /xxx/Braccent/Mono
+    base_path = args.files_dir
+    braccent_path = os.path.join("BRAccent", "Mono")
+    
+    # primary key
+    i = 0
 
-        if "Amazonas".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Roraima".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Amapa".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Belem".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Para".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Acre".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Rondonia".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Tocantins".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "MatoGrosso".upper() in filename.upper():
-            sotaque = 'nortista'
-        elif "Bahia".upper() and "Salvador" in filename.upper():
-            sotaque = 'baiano'
-        elif "Sergipe".upper() in filename.upper():
-            sotaque = 'baiano'
-        elif "Bahia".upper() in filename.upper():
-            sotaque = 'baiano'
-        elif "MinasGerais".upper() and "MontesClaros".upper() in filename.upper():
-            sotaque = 'baiano'
-        elif "MinasGerais".upper() and "SaoFrancisco".upper() in filename.upper():
-            sotaque = 'baiano'
-        elif "MinasGerais".upper() in filename.upper():
-            sotaque = 'mineiro'
-        elif "EspiritoSanto".upper() in filename.upper():
-            sotaque = 'fluminense'
-        elif "EspiritoSanto".upper() and "camposdosgoytacazes".upper() in filename.upper():
-            sotaque = 'fluminense'
-        elif "EspiritoSanto".upper() and "ubatuba".upper() in filename.upper():
-            sotaque = 'fluminense'
-        elif "RioDeJaneiro".upper() in filename.upper():
-            sotaque = 'carioca'
-        elif "Bahia".upper() and "pauloafonso" in filename.upper():
-            sotaque = 'nordestino'
-        elif "Pernambuco".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "Piaui".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "Ceara".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "RioGrandeDoNorte".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "Paraiba".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "Alagoas".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "Maranhao".upper() in filename.upper():
-            sotaque = 'nordestino'
-        elif "SaoPaulo".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "Parana".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "SantaCatarina".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "PortoAlegre".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "RioGrandeDoSul".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "MatoGrossoDoSul".upper() in filename.upper():
-            sotaque = 'sulista'
-        elif "Goias".upper() in filename.upper():
-            sotaque = 'sulista'
-        else:
-            print("####################")
-            print(filename)
-            print("####################")
-            exit()
+    # For each accent /xxx/Braccent/Mono/ACCENT/
+    for accent in ACCENTS:
+     
+        # For each sex /xxx/Braccent/Mono/ACCENT/SEX/
+        for sex in SEX:
 
+            # Now list dir
+            braccent_full_dir = os.path.join(braccent_path, accent, sex)
+            for f in os.listdir(os.path.join(base_path, braccent_full_dir)):
+                i += 1 #auto increment
+                file_name = os.path.splitext(os.path.join(braccent_full_dir, f))[0]
+                file_object = File(i, file_name.rstrip("\n"), accent, sex)
 
-        f = bob.db.braccent.File(i, filename.rstrip("\n"), sotaque)
-
-        # Creating dict to control the files
-        if sotaque not in files:
-            files[sotaque] = []
-        files[sotaque].append(f)
-
-        i = i + 1
-        session.add(f)
+                # Creating dict to store the files in memory
+                if accent not in files:
+                    files[accent] = []
+                files[accent].append(file_object)
+                session.add(file_object)                
 
     return files
 

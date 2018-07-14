@@ -21,14 +21,15 @@ Base = declarative_base()
 
 """ Defining protocols. Yes, they are static """
 
-PROTOCOLS = ('braccent_fold1', 'braccent_fold2', 'braccent_fold3', 'braccent_fold4', 'braccent_fold5', 'braccent_fold6', 'braccent_fold7', 'braccent_fold8', 'braccent_fold9', 'braccent_fold10')
+PROTOCOLS = ('closedset_braccent_fold1', 'closedset_braccent_fold2', 'closedset_braccent_fold3', 'closedset_braccent_fold4', 'closedset_braccent_fold5', 'closedset_braccent_fold6', 'closedset_braccent_fold7', 'closedset_braccent_fold8', 'closedset_braccent_fold9', 'closedset_braccent_fold10')
 
 GROUPS = ('world', 'dev')
 
 PURPOSES = ('train', 'enroll', 'probe')
 
-ACCENTS = ('nortista', 'baiano', 'fluminense', 'mineiro', 'carioca', 'nordestino', 'sulista')
+ACCENTS = ('Nortista', 'Baiano', 'Fluminense', 'Mineiro', 'Carioca', 'Nordestino', 'Sulista')
 
+SEX     = ("Feminino", "Masculino")
 
 class Protocol_File_Association(Base):
     """
@@ -59,13 +60,14 @@ class File(Base, bob.db.base.File):
     """
     __tablename__ = 'file'
 
-
     id = Column(Integer, primary_key=True)
     path = Column(String(300), unique=True)
-    accent = Column(Enum(*ACCENTS))
+    client_id = Column(Enum(*ACCENTS)) # Compatible with bob.bio.base
+    sex = Column(Enum(*SEX))
 
-    def __init__(self, id, path, accent):
+    def __init__(self, id, path, accent, sex):
         # call base class constructor
         bob.db.base.File.__init__(self, file_id=id, path=path)
-        self.accent = accent
+        self.client_id = accent
+        self.sex = sex
 

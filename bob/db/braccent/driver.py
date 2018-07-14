@@ -101,7 +101,7 @@ class Interface(BaseInterface):
     from . import __doc__ as docs
 
     subparsers = self.setup_parser(parser,
-      "CUHK-CUFS database", docs)
+      "Braccent database", docs)
 
     import argparse
     from .query import Database
