@@ -6,18 +6,18 @@
 Database plugin (HighLEvel DB) that connects with bob.bio.base
 """
 
-from bob.bio.base.database.file import BioFile
-from bob.bio.base.database import Database
+from bob.bio.spear.database import AudioBioFile
+from bob.bio.base.database import BioDatabase
 
 
-class BraccentBioFile(BioFile):
+class BraccentBioFile(AudioBioFile):
 
     def __init__(self, f):
-        super(BioFile, self).__init__(client_id=f.client_id, path=f.path, file_id=f.id)
+        super(BraccentBioFile, self).__init__(client_id=f.client_id, path=f.path, file_id=f.id)
         self._f = f
 
 
-class BraccentBioDatabase(ZTBioDatabase):
+class BraccentBioDatabase(BioDatabase):
     """
     Braccent Database plugin (HighLEvel DB) that connects with bob.bio.base
     """
@@ -52,4 +52,7 @@ class BraccentBioDatabase(ZTBioDatabase):
     def objects(self, groups=None, protocol=None, purposes=None, model_ids=None, **kwargs):
         retval = self._db.objects(groups=groups, protocol=protocol, purposes=purposes, model_ids=model_ids, **kwargs)
         return [BraccentBioFile(f) for f in retval]
+        
+    def annotations(self, file):
+        return None
 

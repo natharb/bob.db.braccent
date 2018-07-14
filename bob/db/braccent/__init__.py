@@ -23,6 +23,8 @@
 from .query import Database
 from bob.db.braccent.models import File, Protocol_File_Association
 
+from bob.db.braccent.HighLevelDb import BraccentBioDatabase, BraccentBioFile
+
 def get_config():
   """Returns a string containing the configuration information.
   """

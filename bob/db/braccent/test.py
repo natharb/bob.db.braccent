@@ -95,3 +95,11 @@ def test02_closed_set_braccent():
             assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Nordestino",])) == dev_enroll_nordestino
 
             assert len(bob.db.braccent.Database().objects(protocol=p, groups="dev", purposes="enroll", model_ids=["Sulista",])) == dev_enroll_sulista
+
+
+def test03_highleveldb():
+
+    highlevel_db = bob.db.braccent.BraccentBioDatabase(original_directory="",
+                                                       original_extension="")
+    assert highlevel_db is not None
+    assert len(highlevel_db.objects(protocol="closedset_braccent_fold1")) > 0

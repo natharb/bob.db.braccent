@@ -18,6 +18,7 @@ sphinx
 .pydevproject
 .settings
 *.egg-info
+*.sql3
 .mr.developer.cfg
 .idea
 record.txt
